@@ -62,6 +62,19 @@ const App = () => {
     }
     setClicksDir(newClick)
   }
+
+  const History =(props)=>{
+    if(props.allClicks.length===0){
+      return(
+        <div> The app is using by pressing the buttons, now It is 0</div>
+      )
+    }
+    return(
+      <div>
+        Button press history: {props.allClicks.join(' ')}
+      </div>
+    )
+  }
   
 
   return (
@@ -95,6 +108,7 @@ const App = () => {
         <button onClick={handleRightClick}> Right</button>
       </div>
       <p>All clicks: {allClicks.join(' ')}</p>
+      <History allClicks={allClicks}/>
     </>
   );
 };
