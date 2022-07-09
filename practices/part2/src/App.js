@@ -1,10 +1,20 @@
 import Note from "./components/Note";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
+const App = () => {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
-  const [showAll, setShowAll]= useState(true)
+  const [showAll, setShowAll] = useState(true);
+
+  const hook=()=>{
+    axios.get("http://localhost:3001/notes").then((response) => {
+      setNotes(response.data);
+    })
+  }
+  //useEffect tiene 2 parametros, primero el efecto y segundo cada cuanto el efecto es ejecutado, si es un [] quiere decir
+  //que solo la primera vez que renderiza el componente
+  useEffect(hook, []);
 
   const addNote = (event) => {
     event.preventDefault();
@@ -23,7 +33,7 @@ const App = (props) => {
     setNewNote(event.target.value);
   };
 
-  const notesToShow= showAll ? notes : notes.filter((note)=> note.important )
+  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
   return (
     <div>
@@ -39,9 +49,13 @@ const App = (props) => {
       </form>
 
       <h2>Notas Filtradas</h2>
-      <button onClick={()=>setShowAll(!showAll)}>Show {showAll? 'Important': 'All'}</button>
+      <button onClick={() => setShowAll(!showAll)}>
+        Show {showAll ? "Important" : "All"}
+      </button>
       <ul>
-        {notesToShow.map(note=><li key={note.id}> {note.content}</li>)}
+        {notesToShow.map((note) => (
+          <li key={note.id}> {note.content}</li>
+        ))}
       </ul>
     </div>
   );
