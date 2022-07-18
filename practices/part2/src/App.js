@@ -1,12 +1,15 @@
 import Note from "./components/Note";
+import Notification from "./components/Notification";
+import Footer from "./components/Footer";
 import noteService from "./services/notes";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import './index.css'
 
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
+  const [errorMessage,setErrorMessage]= useState(null)
 
   //useEffect tiene 2 parametros, primero el efecto y segundo cada cuanto el efecto es ejecutado, si es un [] quiere decir
   //que solo la primera vez que renderiza el componente
@@ -39,7 +42,10 @@ const App = () => {
     .then(returnedNote => {
       setNotes(notes.map((note) => (note.id === id ? returnedNote : note)));
     }).catch(error=> {
-      alert(`the note ${id} was already deletd`)
+      setErrorMessage(`Note '${note.content}' was already removed from server`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000);
       setNotes(notes.filter(note=> note.id !== id))
     });
   };
@@ -49,6 +55,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage}/>
       <ul>
         {notes.map((note) => (
           <Note
@@ -72,6 +79,7 @@ const App = () => {
           <li key={note.id}> {note.content}</li>
         ))}
       </ul>
+      <Footer/>
     </div>
   );
 };
