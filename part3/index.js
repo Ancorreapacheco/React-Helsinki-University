@@ -74,6 +74,9 @@ app.get(`${baseUrl}/:id`,(req,res)=>{
 //Route for delete a phonebbook entry
 app.delete(`${baseUrl}/:id`,(req,res)=>{
     const id= Number(req.params.id)
+    if(persons.findIndex(person=>person.id === id)===-1){
+      return res.status(400).end()
+    }
     persons = persons.filter((person)=> person.id !== id)
     res.status(204).end()
 })
