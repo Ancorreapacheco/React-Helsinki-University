@@ -1,5 +1,6 @@
-const { response } = require("express");
+//const { response } = require("express");
 const express = require("express");
+const cors= require('cors')
 const app = express();
 
 //Creando Middleware
@@ -10,7 +11,7 @@ const logMiddleware=(req,res,next)=>{
   console.log('Body:', req.body);
   console.log('-------------');
   next()
-  console.log('Log 2')
+  
 }
 
 const unknowEndPoint=(req,res)=>{
@@ -19,6 +20,7 @@ const unknowEndPoint=(req,res)=>{
 
 //In order to access the data easily, we need the help of the express json-parser that is taken to use with command
 app.use(express.json());
+app.use(cors())
 app.use(logMiddleware)
 
 
@@ -50,10 +52,13 @@ const generateId = () => {
   return maxIs + 1;
 };
 
+//Ruta generica
 app.get("/", (request, response) => {
   response.send("<h1>Hello</h1>");
 });
 
+
+//Ruta todas las notas
 app.get("/api/notes", (request, response) => {
   console.log('Ruta completa')
   response.json(notes);
@@ -97,9 +102,17 @@ app.post("/api/notes", (request, response) => {
   response.json(note)
 });
 
+//Ruta para actualizar importancia
+app.put("/api/notes/:id",(req,res)=>{
+  const body = req.body
+  const id= Number(req.params.id)
+  notes= notes.map(note=> note.id === id ? {...note,important:!note.important} : note )
+  res.json(body)
+})
+
 app.use(unknowEndPoint)
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001// Para despliegue a Heroku
 app.listen(PORT, () => {
   console.log("Server in service");
 });
