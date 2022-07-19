@@ -1,8 +1,27 @@
+const { response } = require("express");
 const express = require("express");
 const app = express();
 
+//Creando Middleware
+
+const logMiddleware=(req,res,next)=>{
+  console.log('Method:', req.method);
+  console.log('path:', req.path);
+  console.log('Body:', req.body);
+  console.log('-------------');
+  next()
+  console.log('Log 2')
+}
+
+const unknowEndPoint=(req,res)=>{
+  res.status(404).send({error:'unknow EndPoint'})
+}
+
 //In order to access the data easily, we need the help of the express json-parser that is taken to use with command
 app.use(express.json());
+app.use(logMiddleware)
+
+
 
 let notes = [
   {
@@ -36,6 +55,7 @@ app.get("/", (request, response) => {
 });
 
 app.get("/api/notes", (request, response) => {
+  console.log('Ruta completa')
   response.json(notes);
 });
 
@@ -76,6 +96,8 @@ app.post("/api/notes", (request, response) => {
   notes= notes.concat(note)
   response.json(note)
 });
+
+app.use(unknowEndPoint)
 
 const PORT = 3001;
 app.listen(PORT, () => {

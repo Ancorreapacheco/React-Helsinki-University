@@ -25,10 +25,24 @@ let persons = [
 
 //Importaciones
 const express = require("express");
+const morgan= require('morgan')
+
+
 const app = express();
+
+//Middleware
+morgan.token('phoneObject',(req)=>{
+  const body= req.body  
+  return JSON.stringify(body)
+})
 
 //In order to access the data easily, we need the help of the express json-parser that is taken to use with command
 app.use(express.json())
+app.use(morgan('tiny'))
+app.use(morgan(`:method :url :status :res[content-length] - :response-time ms :phoneObject`))
+
+
+
 
 //Constants
 const baseUrl = "/api/persons";
