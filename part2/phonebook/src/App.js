@@ -67,7 +67,7 @@ const App = () => {
               setMessage({
                 content: null,
                 isSuccess: true,
-              })
+              });
             }, 5000);
             setPersons(
               persons.map((person) =>
@@ -102,21 +102,25 @@ const App = () => {
         phonebookService
           .deletePerson(id)
           /* .then(deletedPerson=> console.log(deletedPerson)) */
-          .then((deletedPerson) =>{
-            setMessage({content:`Information of ${person.name} removed`,isSuccess:true});
+          .then((deletedPerson) => {
+            setMessage({
+              content: `Information of ${person.name} removed`,
+              isSuccess: true,
+            });
             setInterval(() => {
-              setMessage({content:null,isSuccess:true})
+              setMessage({ content: null, isSuccess: true });
             }, 5000);
-            setPersons(persons.filter((person) => person.id !== id))
-          }
-          
-          )
-          .catch(err=>{
-            setMessage({content:`Information of ${person.name} has already removed`,isSuccess:false});
+            setPersons(persons.filter((person) => person.id !== id));
+          })
+          .catch((err) => {
+            setMessage({
+              content: `Information of ${person.name} has already removed`,
+              isSuccess: false,
+            });
             setInterval(() => {
-              setMessage({content:null,isSuccess:false})
+              setMessage({ content: null, isSuccess: false });
             }, 5000);
-            setPersons(persons.filter((person) => person.id !== id))
+            setPersons(persons.filter((person) => person.id !== id));
           });
       }
     };
