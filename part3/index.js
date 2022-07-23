@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config(); //Let uses env variables for port and Db Url
 
 //Server for Phonebook
 
@@ -31,17 +31,28 @@ const morgan = require("morgan");
 const cors = require("cors");
 const Person = require("./models/persons");
 
-
 const app = express();
 
-//Middleware
+//Defining Middlewares
 morgan.token("phoneObject", (req) => {
   const body = req.body;
   return JSON.stringify(body);
 });
 
-//In order to access the data easily, we need the help of the express json-parser that is taken to use with command
-app.use(express.json());
+const errorHandler = (error, req, res, next) => {
+  if (error.name === "CastError") {
+    res.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+
+const unknownEndPoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+//Ordering middlewares
+app.use(express.json()); //In order to access the data easily, we need the help of the express json-parser that is taken to use with command
+app.use(express.static("build"));
 app.use(morgan("tiny"));
 app.use(
   morgan(
@@ -49,58 +60,59 @@ app.use(
   )
 );
 app.use(cors());
-app.use(express.static("build"));
 
 //Constants
 const baseUrl = "/api/persons";
 const PORT = process.env.PORT;
 
-//Function for creating id
+/* -----------------------------ROUTES---------------------------- */
 
-const generateId = () => {
-  return Math.floor(Math.random() * 500000);
-};
-
-//Route for all persons
-app.get(baseUrl, (req, res) => {
-  Person.find({}).then((persons) => {
-    res.json(persons);
-  });
+//Route for GET info
+app.get("/info", (req, res,next) => {
+  Person.find({})
+  .then(persons => {
+    const time = new Date();
+    res.send(`<div>    
+        <p>Phonebook has info for ${persons.length} people</p>
+        <p>${time.toUTCString()} ${time
+        .toLocaleDateString("en-US", { day: "2-digit", timeZoneName: "long" })
+        .slice(4)}</p>    
+        </div>`)
+  })
+  .catch(error=> next(error))
 });
 
-//Route for single phonebbok entry
-app.get(`${baseUrl}/:id`, (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (person) {
-    return res.json(person);
-  }
-  res.status(404).end();
+//Route for GET all persons
+app.get(baseUrl, (req, res, next) => {
+  Person.find({})
+    .then((persons) => {
+      res.json(persons);
+    })
+    .catch((error) => next(error));
 });
 
-//Route for delete a phonebbook entry
-app.delete(`${baseUrl}/:id`, (req, res) => {
-  const id = Number(req.params.id);
-  if (persons.findIndex((person) => person.id === id) === -1) {
-    return res.status(400).end();
-  }
-  persons = persons.filter((person) => person.id !== id);
-  res.status(204).end();
+//Route for GET single phonebook entry
+app.get(`${baseUrl}/:id`, (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((note) => {
+      if (note) {
+        res.json(note);
+      } else {
+        res.statusMessage = "Id does not exist";
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
-//Route for info
-app.get("/info", (req, res) => {
-  const time = new Date();
-  res.send(`<div>    
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${time.toUTCString()} ${time
-    .toLocaleDateString("en-US", { day: "2-digit", timeZoneName: "long" })
-    .slice(4)}</p>    
-    </div>`);
+//Route for DELETE a phonebbook entry
+app.delete(`${baseUrl}/:id`, (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((result) => res.status(204).end())
+    .catch((error) => next(error));
 });
 
-//Route for create new phonebook entry
-
+//Route for create POST new phonebook entry
 app.post(baseUrl, (req, res) => {
   const body = req.body;
 
@@ -117,6 +129,22 @@ app.post(baseUrl, (req, res) => {
     res.json(personSaved);
   });
 });
+
+//Route for PUT update an existing phonebook entry
+app.put(`${baseUrl}/:id`, (req, res, next) => {
+  const body = req.body;
+
+  const person = {
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => res.json(updatedPerson))
+    .catch((error) => next(error));
+});
+
+app.use(unknownEndPoint); // handler of requests with unknown endpoint
+app.use(errorHandler); // handler of requests with result to errors
 
 app.listen(PORT, () => {
   console.log("Servidor en servicio");
