@@ -91,7 +91,6 @@ const App = () => {
           isSuccess: true,
         });
       }, 5000);
-
       setPersons(persons.concat(personAdded));
     }).catch(error=>{
       setMessage({
