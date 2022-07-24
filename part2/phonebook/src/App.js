@@ -93,6 +93,18 @@ const App = () => {
       }, 5000);
 
       setPersons(persons.concat(personAdded));
+    }).catch(error=>{
+      setMessage({
+        content:error.response.data.error,
+        isSuccess:false,
+      });
+      setInterval(() => {
+        setMessage({
+          content:null,
+          isSuccess:false
+        })
+      }, 10000);
+      
     });
   };
 

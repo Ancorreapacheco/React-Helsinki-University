@@ -41,7 +41,9 @@ morgan.token("phoneObject", (req) => {
 
 const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError") {
-    res.status(400).send({ error: "malformatted id" });
+    res.status(400).send({ error: "Malformatted id" });
+  }else if(error.name === 'ValidationError'){
+    res.status(400).send({error: error.message})
   }
   next(error);
 };
@@ -68,18 +70,18 @@ const PORT = process.env.PORT;
 /* -----------------------------ROUTES---------------------------- */
 
 //Route for GET info
-app.get("/info", (req, res,next) => {
+app.get("/info", (req, res, next) => {
   Person.find({})
-  .then(persons => {
-    const time = new Date();
-    res.send(`<div>    
+    .then((persons) => {
+      const time = new Date();
+      res.send(`<div>    
         <p>Phonebook has info for ${persons.length} people</p>
         <p>${time.toUTCString()} ${time
         .toLocaleDateString("en-US", { day: "2-digit", timeZoneName: "long" })
         .slice(4)}</p>    
-        </div>`)
-  })
-  .catch(error=> next(error))
+        </div>`);
+    })
+    .catch((error) => next(error));
 });
 
 //Route for GET all persons
@@ -113,7 +115,7 @@ app.delete(`${baseUrl}/:id`, (req, res, next) => {
 });
 
 //Route for create POST new phonebook entry
-app.post(baseUrl, (req, res) => {
+app.post(baseUrl, (req, res, next) => {
   const body = req.body;
 
   if (!body.name || !body.number) {
@@ -125,20 +127,28 @@ app.post(baseUrl, (req, res) => {
     number: body.number,
   });
 
-  newPerson.save().then((personSaved) => {
-    res.json(personSaved);
-  });
+  newPerson
+    .save()
+    .then((personSaved) => {
+      res.json(personSaved);
+    })
+    .catch((error) => next(error));
 });
 
 //Route for PUT update an existing phonebook entry
 app.put(`${baseUrl}/:id`, (req, res, next) => {
-  const body = req.body;
+  const { name, number } = req.body;
 
   const person = {
-    number: body.number,
+    name: name,
+    number: number,
   };
 
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, person, {
+    new: true,
+    runValidators: true,
+    context:'query'
+  })
     .then((updatedPerson) => res.json(updatedPerson))
     .catch((error) => next(error));
 });

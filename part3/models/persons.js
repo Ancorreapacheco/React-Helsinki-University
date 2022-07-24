@@ -15,20 +15,33 @@ mongoose
 
 //Definiendo Schema
 
+const regNumber = (value) => {
+  const regExpress = /\d{2,3}-\d{4,}/y;
+  
+  return regExpress.test(value);
+};
+
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: { type: String, minLength: 8,
+  validate:{
+      validator: regNumber,
+      message:'Malformatted number'
+  } },
 });
 
+personSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
 
-personSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString()
-      delete returnedObject._id
-      delete returnedObject.__v
-    }
-  })
+const Person = mongoose.model("Person", personSchema);
 
-const Person= mongoose.model('Person', personSchema)
-
-module.exports= Person
+module.exports = Person;
