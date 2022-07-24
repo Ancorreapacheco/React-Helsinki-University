@@ -74,37 +74,51 @@ const App = () => {
                 person.id === personUpdated.id ? personUpdated : person
               )
             );
+          })
+          .catch((error) => {
+            setMessage({
+              content: error.response.data.error,
+              isSuccess: false,
+            });
+            setInterval(() => {
+              setMessage({
+                content: null,
+                isSuccess: false,
+              });
+            }, 10000);
           });
         return;
       } else {
         return;
       }
     }
-    phonebookService.create(newPerson).then((personAdded) => {
-      setMessage({
-        content: `Added ${personAdded.name}`,
-        isSuccess: true,
-      });
-      setInterval(() => {
+    phonebookService
+      .create(newPerson)
+      .then((personAdded) => {
         setMessage({
-          content: null,
+          content: `Added ${personAdded.name}`,
           isSuccess: true,
         });
-      }, 5000);
-      setPersons(persons.concat(personAdded));
-    }).catch(error=>{
-      setMessage({
-        content:error.response.data.error,
-        isSuccess:false,
-      });
-      setInterval(() => {
+        setInterval(() => {
+          setMessage({
+            content: null,
+            isSuccess: true,
+          });
+        }, 5000);
+        setPersons(persons.concat(personAdded));
+      })
+      .catch((error) => {
         setMessage({
-          content:null,
-          isSuccess:false
-        })
-      }, 10000);
-      
-    });
+          content: error.response.data.error,
+          isSuccess: false,
+        });
+        setInterval(() => {
+          setMessage({
+            content: null,
+            isSuccess: false,
+          });
+        }, 10000);
+      });
   };
 
   const deletePerson = (id, person) => {
