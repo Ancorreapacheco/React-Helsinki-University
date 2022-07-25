@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 if (process.argv.length < 3) {
-  console.log("Provide Password");
+  console.log('Provide Password');
   process.exit(1);
 }
 
 const password = process.argv[2];
-const dbName = "phoneBook";
+const dbName = 'phoneBook';
 const url = `mongodb+srv://fullstack:${password}@cluster0.gbh8rif.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 const personSchema = new mongoose.Schema({
@@ -14,13 +14,13 @@ const personSchema = new mongoose.Schema({
   number: String,
 });
 
-const Person = mongoose.model("Person", personSchema);
+const Person = mongoose.model('Person', personSchema);
 
 if (process.argv.length === 5) {
   mongoose
     .connect(url)
-    .then((result) => {
-      console.log("Conectado a DB");
+    .then(() => {
+      console.log('Conectado a DB');
       const person = new Person({
         name: process.argv[3],
         number: process.argv[4],
@@ -36,7 +36,7 @@ if (process.argv.length === 5) {
 }
 
 if (process.argv.length === 3) {
-  console.log("Phonebook");
+  console.log('Phonebook');
 
   mongoose.connect(url);
 

@@ -1,23 +1,22 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const url = process.env.MONGODB_URI;
 
 mongoose
   .connect(url)
-  .then((res) => {
-    console.log("Connected to DB");
+  .then(() => {
+    console.log('Connected to DB');
   })
   .catch((err) => {
-    console.log("Failed to connect DB", err.message);
+    console.log('Failed to connect DB', err.message);
   });
 
 //Definiendo Schema
 
 const regNumber = (value) => {
   const regExpress = /\d{2,3}-\d{4,}/y;
-  
   return regExpress.test(value);
 };
 
@@ -28,13 +27,13 @@ const personSchema = new mongoose.Schema({
     required: true,
   },
   number: { type: String, minLength: 8,
-  validate:{
+    validate:{
       validator: regNumber,
       message:'Malformatted number'
-  } },
+    } },
 });
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -42,6 +41,6 @@ personSchema.set("toJSON", {
   },
 });
 
-const Person = mongoose.model("Person", personSchema);
+const Person = mongoose.model('Person', personSchema);
 
 module.exports = Person;
