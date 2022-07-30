@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -8,7 +8,7 @@ const blogSchema = new mongoose.Schema({
 });
 
 //Se mofifica el metodo toJson del Schema para eliminar el _v y asegurar que el id sea un string (de lo retornado de la DB)
-blogSchema.set("toJSON", {
+blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -16,6 +16,6 @@ blogSchema.set("toJSON", {
   },
 });
 
-const Blog = mongoose.model("Blog", blogSchema);
+const Blog = mongoose.model('Blog', blogSchema);
 
 module.exports = Blog;
