@@ -1,10 +1,12 @@
+const logger= require('./logger')
+
 //Creando Middleware
 //Middleware para hacer log a las peticiones
 const requestLogger = (req, res, next) => {
-  console.log("Method:", req.method);
-  console.log("path:", req.path);
-  console.log("Body:", req.body);
-  console.log("-------------");
+  logger.info("Method:", req.method);
+  logger.info("path:", req.path);
+  logger.info("Body:", req.body);
+  logger.info("-------------");
   next();
 };
 
