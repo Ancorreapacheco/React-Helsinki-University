@@ -26,6 +26,12 @@ test('blog list application returns the correct amount of blog posts in the JSON
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length) */
 },100000)
 
+test('unique identifier is named id', async () => {
+    const blogs= await helper.blogsInDB()
+    const blogToCompare= blogs[0]
+    expect(blogToCompare.id).toBeDefined()
+})
+
 
 afterAll( () => {
     mongoose.connection.close()
