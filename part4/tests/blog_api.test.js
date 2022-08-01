@@ -10,9 +10,10 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  const arrayBlogs = helper.initialBlogs.map((blog) => new Blog(blog))
+  await Blog.insertMany(helper.initialBlogs)
+  /* const arrayBlogs = helper.initialBlogs.map((blog) => new Blog(blog))
   const arrayPromises = arrayBlogs.map((blog) => blog.save())
-  await Promise.all(arrayPromises)
+  await Promise.all(arrayPromises) */
 })
 
 
