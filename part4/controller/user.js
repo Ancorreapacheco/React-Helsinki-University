@@ -12,6 +12,15 @@ userRouter.get('/', async (request, response) => {
 userRouter.post('/', async (request, response) => {
   const { username, password, name } = request.body
 
+
+  if(!(password || password.length < 3)){ //wn revision este test
+    return response.status(400).send( { error: 'Password must be at least 3 ch' })
+  }
+
+  if(username === undefined){
+    return response.status(400).send({ error:'Username Undefined' })
+  }
+
   const userExist= await User.findOne({ username })
   if(userExist){
     return response.status(400).send({ error: 'User is taken' })
