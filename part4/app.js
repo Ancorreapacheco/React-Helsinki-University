@@ -33,6 +33,7 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)
+app.use(middleware.tokenExtractor)// MWare para extrar el token enviado en el request
 
 app.use('/api/login',loginRouter)
 app.use('/api/users',userRouter)
