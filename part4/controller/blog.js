@@ -1,5 +1,6 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User= require('../models/user')
 
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
@@ -24,15 +25,20 @@ blogRouter.post('/', async (request, response) => {
     response.status(400).send({ error: 'No title or url' })
   }
 
+  const users= await User.find({})
+  const user= users[0]
+
   const blog = new Blog({
     title: title,
     author: author,
     url: url,
     likes: likes || 0,
+    user: user.id
   })
 
   const blogSaved = await blog.save()
-
+  user.blogs= user.blogs.concat(blogSaved)
+  await user.save()
   response.status(201).json(blogSaved)
 })
 

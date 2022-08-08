@@ -13,8 +13,8 @@ userRouter.post('/', async (request, response) => {
   const { username, password, name } = request.body
 
 
-  if(!(password || password.length < 3)){ //wn revision este test
-    return response.status(400).send( { error: 'Password must be at least 3 ch' })
+  if(((!password) || password.length < 3)){ //wn revision este test
+    return response.status(400).send( { error: 'Password must be at least 3 characters' })
   }
 
   if(username === undefined){
