@@ -64,12 +64,12 @@
     "method": "POST",
     "sortNum": 0,
     "created": "2022-08-09T02:49:20.353Z",
-    "modified": "2022-08-09T02:49:20.752Z",
+    "modified": "2022-08-12T01:39:37.555Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\"username\":\"andres\",\n\"password\":\"andres\"}",
+      "raw": "{\"username\":\"marjo\",\n\"password\":\"marjo\"}",
       "form": []
     },
     "tests": []
@@ -83,7 +83,7 @@
     "method": "GET",
     "sortNum": 0,
     "created": "2022-08-09T02:50:01.952Z",
-    "modified": "2022-08-09T03:24:37.155Z",
+    "modified": "2022-08-12T01:40:32.888Z",
     "headers": [],
     "params": [],
     "tests": []
@@ -143,6 +143,30 @@
       }
     ],
     "params": [],
+    "tests": []
+  },
+  {
+    "_id": "19a27cea-3aae-4639-b0b0-4d38e8536846",
+    "colId": "history",
+    "containerId": "",
+    "name": "http://localhost:3003/api/blogs",
+    "url": "http://localhost:3003/api/blogs",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-12T01:40:21.066Z",
+    "modified": "2022-08-12T02:48:57.276Z",
+    "headers": [
+      {
+        "name": "Authorization",
+        "value": "bearer feyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmpvIiwiaWQiOiI2MmVkY2EwNWFkNzRlNDQ4N2UyODdlZDEiLCJpYXQiOjE2NjAyNjgzNzd9.1uS_5Dr__5SYrBKDd1ZtMfgyHDA09HMz7oFAjh9Yyns"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\"title\": \"Lady Alex\",\n    \"author\": \"JR Rokil\",\n    \"url\": \"www.nourl\",\n    \"likes\": 40\n    }",
+      "form": []
+    },
     "tests": []
   }
 ]

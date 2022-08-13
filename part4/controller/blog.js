@@ -1,9 +1,10 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User= require('../models/user')
+//const User= require('../models/user')
 const jwt= require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware')
 
-blogRouter.get('/', async (request, response) => {
+blogRouter.get('/',async (request, response) => {
   const blogs = await Blog.find({})
   response.json(blogs)
 })
@@ -19,10 +20,10 @@ blogRouter.get('/:id', async (request, response) => {
   response.status(404).end()
 })
 
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/', userExtractor , async (request, response) => {
   const { title, author, url, likes } = request.body
 
-  const decodedToken= jwt.decode(request.token,process.env.SECRET)
+  const decodedToken= jwt.verify(request.token,process.env.SECRET)
 
   if(!decodedToken.id){
     return response.status(400).send({ error: 'Token missing or invalid' })
@@ -32,7 +33,8 @@ blogRouter.post('/', async (request, response) => {
     response.status(400).send({ error: 'No title or url' })
   }
 
-  const user= await User.findById(decodedToken.id)
+  //const user= await User.findById(decodedToken.id)
+  const user= request.user
 
   const blog = new Blog({
     title: title,
@@ -48,9 +50,9 @@ blogRouter.post('/', async (request, response) => {
   response.status(201).json(blogSaved)
 })
 
-blogRouter.delete('/:id', async (request, response) => {
+blogRouter.delete('/:id', userExtractor , async (request, response) => {
 
-  const decodedToken= jwt.decode(request.token , process.env.SECRET)
+  const decodedToken= jwt.verify(request.token , process.env.SECRET)
 
   if(!decodedToken.id){
     response.status(400).send({ error: 'Token missing or invalid' })
@@ -61,7 +63,8 @@ blogRouter.delete('/:id', async (request, response) => {
   if(!blog){
     return response.status(400).send({ error: 'This blog id does not exist' })
   }
-  const user= await User.findById(decodedToken.id)
+  //const user= await User.findById(decodedToken.id)
+  const user= request.user
 
   if(blog.user.toString()=== user.id.toString()){
     await Blog.findByIdAndRemove(request.params.id)
