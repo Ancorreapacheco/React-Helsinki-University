@@ -16,8 +16,8 @@ beforeEach(async () => {
   const users= await User.find({})
   const blogs= helper.initialBlogs.map((blog) => ({ ...blog,user: users[0].id }))
   await Blog.insertMany(blogs)
-  blogs.forEach((blog) => {
-    console.log(blog)
+  const blogsSaved= await Blog.find({})
+  blogsSaved.forEach((blog) => {
     users[0].blogs= users[0].blogs.concat(blog.id)
   })
   await users[0].save()
@@ -30,6 +30,18 @@ beforeEach(async () => {
 test('delete a single blog post', async () => {
   const blogsAtStart= await helper.blogsInDB()
   const blogToDelete= blogsAtStart[0]
+  const userWhoDelete= await User.findById(blogToDelete.user.toString())
+  const userCredentials= helper.initialUsers.find(user => user.username === userWhoDelete.username)
+  const credentials= {
+    username: userCredentials.username,
+    password: userCredentials.passwordHash
+  }
+  console.log(credentials)
+  const token= await api
+    .post('/api/login')
+    .send(credentials)
+  console.log(token)
+
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
     .expect(204)
