@@ -1,6 +1,20 @@
 const Blog= require('../models/blog')
 const User= require('../models/user')
+const bcrypt= require('bcrypt')
 
+/* const initialUsers= [{
+  'username': 'andres',
+  'name': 'andres',
+  'passwordHash': 'andres'
+},{
+  'username': 'marjo',
+  'name': 'marjo',
+  'passwordHash': 'marjo'
+},{
+  'username': 'dani',
+  'name': 'dani',
+  'passwordHash': 'dani'
+}] */
 const initialBlogs = [
   {
     /* _id: '5a422a851b54a676234d17f7', */
@@ -52,19 +66,32 @@ const initialBlogs = [
   },
 ]
 
-const initialUsers= [{
+const users= [{
   'username': 'andres',
   'name': 'andres',
-  'passwordHash': 'andres'
+  'password': 'andres'
 },{
   'username': 'marjo',
   'name': 'marjo',
-  'passwordHash': 'marjo'
+  'password': 'marjo'
 },{
   'username': 'dani',
   'name': 'dani',
-  'passwordHash': 'dani'
+  'password': 'dani'
 }]
+
+
+
+const initialUsers= async () => {
+  const usersEnd=[]
+  for(const user of users){
+    let passHashed= await bcrypt.hash(user.password,10)
+    const userHashed= { ...user, passwordHash: passHashed }
+    usersEnd.push(userHashed)
+  }
+  return usersEnd
+}
+
 
 const blogsInDB= async () => {
   const blogs= await Blog.find({})
