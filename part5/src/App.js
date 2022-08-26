@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 //Styles
 
@@ -10,6 +10,7 @@ import Blog from './components/Blog'
 import LoginForm from './components/LogInForm'
 import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
+import Toggleable from './components/Toggleable'
 
 
 //Services
@@ -20,11 +21,10 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username,setUsername]= useState('')
   const [password, setPassword]= useState('')
-  const [user, setUser]= useState(null)
-  const [author, setAuthor]= useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl]= useState('')
+  const [user, setUser]= useState(null)  
   const [message, setMessage]= useState({content: null, isSuccess: true})
+
+  const blogFormRef= useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -84,20 +84,12 @@ const App = () => {
     }
   }
 
-  const handleNewBlog = async e =>{
-    e.preventDefault()
-    const newBlog={
-      title,
-      author,
-      url
-    }
+  const addBlog = async blogObject =>{
     try {
-      const blogCreated= await blogService.create(newBlog)
-      setBlogs(blogs.concat(blogCreated))
-      setTitle("")
-      setAuthor("")
-      setUrl("")
+      const blogCreated= await blogService.create(blogObject)
+      setBlogs(blogs.concat(blogCreated))      
       setMessage({content:`New blog added: ${blogCreated.title} by ${blogCreated.author}`,isSuccess:true})
+      blogFormRef.current.changeVisible()
       setTimeout(() => {
         setMessage({content:null, isSuccess:true})
       }, 5000);
@@ -119,17 +111,7 @@ const App = () => {
     setPassword(e.target.value)
   }
 
-  const handleTitle= e => {
-    setTitle(e.target.value)
-  }
 
-  const handleAuthor = e => {
-    setAuthor(e.target.value)
-  }
-
-  const handleUrl= e => {
-    setUrl(e.target.value)
-  }
 
   // --------------Objects Props for components----------------
   const propsLoginForm={
@@ -139,16 +121,6 @@ const App = () => {
     handlePassword: handlePassword,
     handleUsername: handleUsername,
     user:user,      
-  }
-
-  const propsNewBlogForm={
-    title,
-    handleTitle,
-    author,
-    handleAuthor,
-    url,
-    handleUrl,
-    handleNewBlog
   }
 
 //-----------------Render -------------------
@@ -166,7 +138,11 @@ const App = () => {
     <Notification message={message}/>
     <p> User logged in: {user.username}</p>
     <button onClick={handleLogout}>Log Out</button>
-    <NewBlogForm props={propsNewBlogForm}/>
+    
+    <Toggleable buttonLabel='New Blog Entry' ref={blogFormRef}>
+      <NewBlogForm addBlog={addBlog}/>
+    </Toggleable>
+    
     <h2>Blogs</h2>
     {blogs.map(blog => <Blog key={blog.id} blog={blog}/>)}
     </>

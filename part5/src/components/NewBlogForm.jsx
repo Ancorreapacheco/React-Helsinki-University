@@ -1,6 +1,31 @@
-const NewBlogForm= ({props}) =>{
+import { useState } from "react"
 
-  const { handleNewBlog, title, handleTitle, author, handleAuthor, url, handleUrl} = props
+const NewBlogForm= ({addBlog}) =>{
+  
+  const [author, setAuthor]= useState('')
+  const [title, setTitle] = useState('')
+  const [url, setUrl]= useState('')
+
+  const handleTitle= e => {
+    setTitle(e.target.value)
+  }
+
+  const handleAuthor = e => {
+    setAuthor(e.target.value)
+  }
+
+  const handleUrl= e => {
+    setUrl(e.target.value)
+  }
+
+  const handleNewBlog= async e =>{
+    e.preventDefault()
+    const blogObject= {title,url,author}
+    addBlog(blogObject)
+    setTitle("")
+    setAuthor("")
+    setUrl("")
+  }
 
   return (
     <>
