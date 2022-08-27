@@ -120,6 +120,19 @@ const App = () => {
     }
   }
 
+  const removeBlog = async id =>{
+    try {      
+      await blogService.remove(id)
+      setBlogs(sortHighToLow(blogs.filter( blog => blog.id !== id)))
+    } catch (error) {
+      setBlogs(sortHighToLow(blogs))
+      setMessage({content:`Could not delete blog`,isSuccess:false})
+      setTimeout(() => {
+        setMessage({content:null, isSuccess:true})
+      }, 5000);
+    }
+  }
+
   //---------------- Handling user input-------------
   const handleUsername = e =>{
     setUsername(e.target.value)
@@ -162,7 +175,7 @@ const App = () => {
     </Toggleable>
     
     <h2>Blogs</h2>
-    {blogs.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>)}
+    {blogs.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} removeBlog={removeBlog}/>)}
     </>
   )
 }

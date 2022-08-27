@@ -24,6 +24,7 @@ const create = async newBlog => {
 }
 
 const update = async (id, blogToUpdate) => {
+
   try {
     const response= await axios.put(`${baseUrl}/${id}`,blogToUpdate)
     return response.data
@@ -32,4 +33,19 @@ const update = async (id, blogToUpdate) => {
   }
 }
 
-export default { getAll, setToken, create, update }
+const remove = async id => {
+  const configuration = {
+    headers:{
+      Authorization: token
+    }
+  }
+
+  try {
+    const response= await axios.delete(`${baseUrl}/${id}`,configuration)
+    return response.data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export default { getAll, setToken, create, update, remove }

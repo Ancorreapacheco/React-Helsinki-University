@@ -18,3 +18,7 @@
   margin-bottom: 10px;
 }
 
+.btn-remove{
+  background-color: black;
+  color: red;
+}
