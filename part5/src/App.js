@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 
 //Styles
 
-import "./style/app.css"
+import './style/app.css'
 
 
 //Components
@@ -21,8 +21,8 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username,setUsername]= useState('')
   const [password, setPassword]= useState('')
-  const [user, setUser]= useState(null)  
-  const [message, setMessage]= useState({content: null, isSuccess: true})
+  const [user, setUser]= useState(null)
+  const [message, setMessage]= useState({ content: null, isSuccess: true })
 
   const blogFormRef= useRef()
 
@@ -33,10 +33,10 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( sortHighToLow(blogs) )
-    )  
+    )
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     const userInLocal= window.localStorage.getItem('userLoggedIn')
     if(userInLocal){
       const user= JSON.parse(userInLocal)
@@ -47,24 +47,24 @@ const App = () => {
 
   //----- Handling Options and buttons ---------------
 
-  const handleLogin = async e =>{
+  const handleLogin = async e => {
     e.preventDefault()
-     try {
+    try {
       const user= await logInService.logIn({ username, password })
-      setUser(user)      
+      setUser(user)
       blogService.setToken(user.token)
       setPassword('')
       setUsername('')
       window.localStorage.setItem('userLoggedIn',JSON.stringify(user))
-      setMessage({content:'Login Succesful',isSuccess:true})
+      setMessage({ content:'Login Succesful',isSuccess:true })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);      
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     } catch (error) {
-      setMessage({content:'Username o password wrong',isSuccess:false})
+      setMessage({ content:'Username o password wrong',isSuccess:false })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
       console.log(error.message)
     }
 
@@ -76,33 +76,33 @@ const App = () => {
       window.localStorage.removeItem('userLoggedIn')
       setUser(null)
       blogService.setToken(null)
-      setMessage({content:'LogOut Succesful',isSuccess:true})
+      setMessage({ content:'LogOut Succesful',isSuccess:true })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);      
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     } catch (error) {
-      setMessage({content:'Logout failed',isSuccess:false})
+      setMessage({ content:'Logout failed',isSuccess:false })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     }
   }
 
-  const addBlog = async blogObject =>{
+  const addBlog = async blogObject => {
     try {
       const blogCreated= await blogService.create(blogObject)
-      setBlogs(sortHighToLow(blogs.concat(blogCreated)))      
-      setMessage({content:`New blog added: ${blogCreated.title} by ${blogCreated.author}`,isSuccess:true})
+      setBlogs(sortHighToLow(blogs.concat(blogCreated)))
+      setMessage({ content:`New blog added: ${blogCreated.title} by ${blogCreated.author}`,isSuccess:true })
       blogFormRef.current.changeVisible()
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     } catch (error) {
       setBlogs(sortHighToLow(blogs))
-      setMessage({content:`New blog could not be added`,isSuccess:false})
+      setMessage({ content:'New blog could not be added',isSuccess:false })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     }
   }
 
@@ -110,35 +110,35 @@ const App = () => {
     try {
       const blogUpdated= await blogService.update(id,blogToUpdate)
       setBlogs(sortHighToLow(blogs.map((blog) => blog.id === id ? blogUpdated : blog)))
-      
+
     } catch (error) {
       setBlogs(sortHighToLow(blogs))
-      setMessage({content:`Could not update info`,isSuccess:false})
+      setMessage({ content:'Could not update info',isSuccess:false })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     }
   }
 
-  const removeBlog = async id =>{
-    try {      
+  const removeBlog = async id => {
+    try {
       await blogService.remove(id)
       setBlogs(sortHighToLow(blogs.filter( blog => blog.id !== id)))
     } catch (error) {
       setBlogs(sortHighToLow(blogs))
-      setMessage({content:`Could not delete blog`,isSuccess:false})
+      setMessage({ content:'Could not delete blog',isSuccess:false })
       setTimeout(() => {
-        setMessage({content:null, isSuccess:true})
-      }, 5000);
+        setMessage({ content:null, isSuccess:true })
+      }, 5000)
     }
   }
 
   //---------------- Handling user input-------------
-  const handleUsername = e =>{
+  const handleUsername = e => {
     setUsername(e.target.value)
   }
 
-  const handlePassword = e =>{
+  const handlePassword = e => {
     setPassword(e.target.value)
   }
 
@@ -146,36 +146,36 @@ const App = () => {
 
   // --------------Objects Props for components----------------
   const propsLoginForm={
-    handleLogin: handleLogin,    
+    handleLogin: handleLogin,
     username: username,
     password: password,
     handlePassword: handlePassword,
     handleUsername: handleUsername,
-    user:user,      
+    user:user,
   }
 
-//-----------------Render -------------------
+  //-----------------Render -------------------
 
   if(user=== null){
     return(
       <>
-      <Notification message={message}/>
-      <LoginForm props={propsLoginForm}/>
+        <Notification message={message}/>
+        <LoginForm props={propsLoginForm}/>
       </>
-      ) 
+    )
   }
   return (
     <>
-    <Notification message={message}/>
-    <p> User logged in: {user.username}</p>
-    <button onClick={handleLogout}>Log Out</button>
-    
-    <Toggleable buttonLabel='New Blog Entry' ref={blogFormRef}>
-      <NewBlogForm addBlog={addBlog}/>
-    </Toggleable>
-    
-    <h2>Blogs</h2>
-    {blogs.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} removeBlog={removeBlog}/>)}
+      <Notification message={message}/>
+      <p> User logged in: {user.username}</p>
+      <button onClick={handleLogout}>Log Out</button>
+
+      <Toggleable buttonLabel='New Blog Entry' ref={blogFormRef}>
+        <NewBlogForm addBlog={addBlog}/>
+      </Toggleable>
+
+      <h2>Blogs</h2>
+      {blogs.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} removeBlog={removeBlog}/>)}
     </>
   )
 }

@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useState } from 'react'
 
-const NewBlogForm= ({addBlog}) =>{
-  
+const NewBlogForm= ({ addBlog }) => {
+
   const [author, setAuthor]= useState('')
   const [title, setTitle] = useState('')
   const [url, setUrl]= useState('')
@@ -18,35 +18,35 @@ const NewBlogForm= ({addBlog}) =>{
     setUrl(e.target.value)
   }
 
-  const handleNewBlog= async e =>{
+  const handleNewBlog= async e => {
     e.preventDefault()
-    const blogObject= {title,url,author}
+    const blogObject= { title,url,author }
     addBlog(blogObject)
-    setTitle("")
-    setAuthor("")
-    setUrl("")
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
     <>
-    <h2> New Entry</h2>
-    <form onSubmit={handleNewBlog}>
-      <div>
-        <label htmlFor="title">Title:</label>
-        <input type="text" id="text" value={title} onChange={handleTitle}/>
-      </div>
-      <div>
-        <label htmlFor="author">Author:</label>
-        <input type="text" id="author" value={author} onChange={handleAuthor}/>
-      </div>
-      <div>
-        <label htmlFor="url">URL:</label>
-        <input type="text" id="url" value={url} onChange={handleUrl}/>
-      </div>
-      <button> Create</button>
+      <h2> New Entry</h2>
+      <form onSubmit={handleNewBlog}>
+        <div>
+          <label htmlFor="title">Title:</label>
+          <input type="text" id="text" value={title} onChange={handleTitle}/>
+        </div>
+        <div>
+          <label htmlFor="author">Author:</label>
+          <input type="text" id="author" value={author} onChange={handleAuthor}/>
+        </div>
+        <div>
+          <label htmlFor="url">URL:</label>
+          <input type="text" id="url" value={url} onChange={handleUrl}/>
+        </div>
+        <button> Create</button>
 
 
-    </form>
+      </form>
     </>
   )
 }

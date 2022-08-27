@@ -1,15 +1,15 @@
 
 const LoginForm = ({ props }) => {
   const {
-    handleLogin,    
+    handleLogin,
     username,
     password,
     handleUsername,
     handlePassword,
     user,
-  } = props;
+  } = props
 
-  
+
 
 
   if (user === null) {
@@ -41,10 +41,10 @@ const LoginForm = ({ props }) => {
         </form>
       </>
     )
-    
+
   }
 
 
-};
+}
 
-export default LoginForm;
+export default LoginForm
