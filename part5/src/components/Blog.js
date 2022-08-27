@@ -1,12 +1,19 @@
 import { useState } from "react"
 
-const Blog = ({blog}) => {
+const Blog = ({ blog, updateBlog }) => {
 
   const [blogVisible, setBlogVisible] = useState(false)
 
   const handleBlogVisible= () =>{
     setBlogVisible(!blogVisible)
   }
+
+  const updatingBlog = () =>{
+    const blogToUpdate = { ...blog, likes: blog.likes + 1}
+    updateBlog(blogToUpdate.id,blogToUpdate)
+  }
+
+  //Style
 
   const blogStyle = {
     paddingTop: 10,
@@ -23,7 +30,7 @@ const Blog = ({blog}) => {
     blogVisible ? <div style={blogStyle}>
                     <p>{blog.title}  <button onClick={handleBlogVisible}> {buttonName} </button> </p>
                     <p>{blog.url}</p>
-                    <p>{blog.likes} <button > Like </button> </p>
+                    <p>{blog.likes} <button onClick={updatingBlog}  > Like </button> </p>
                     <p>{blog.author} </p>
                   </div>   
                 : <div style={blogStyle}>

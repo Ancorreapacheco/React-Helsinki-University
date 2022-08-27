@@ -76,12 +76,13 @@ blogRouter.delete('/:id', userExtractor , async (request, response) => {
 })
 
 blogRouter.put('/:id', async (request, response) => {
-  const { title, author, url, likes } = request.body
+  const { title, author, url, likes, user } = request.body
   const blogPost = {
     title: title,
     author: author,
     url: url,
-    likes: likes
+    likes: likes,
+    user
   }
 
   const blogSaved= await Blog.findByIdAndUpdate(request.params.id,blogPost,{

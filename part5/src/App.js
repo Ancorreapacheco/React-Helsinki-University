@@ -26,9 +26,13 @@ const App = () => {
 
   const blogFormRef= useRef()
 
+  const sortHighToLow = arrayBlogs => {
+    return arrayBlogs.sort((a,b) => b.likes - a.likes)
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( sortHighToLow(blogs) )
     )  
   }, [])
 
@@ -87,15 +91,29 @@ const App = () => {
   const addBlog = async blogObject =>{
     try {
       const blogCreated= await blogService.create(blogObject)
-      setBlogs(blogs.concat(blogCreated))      
+      setBlogs(sortHighToLow(blogs.concat(blogCreated)))      
       setMessage({content:`New blog added: ${blogCreated.title} by ${blogCreated.author}`,isSuccess:true})
       blogFormRef.current.changeVisible()
       setTimeout(() => {
         setMessage({content:null, isSuccess:true})
       }, 5000);
     } catch (error) {
-      setBlogs(blogs)
+      setBlogs(sortHighToLow(blogs))
       setMessage({content:`New blog could not be added`,isSuccess:false})
+      setTimeout(() => {
+        setMessage({content:null, isSuccess:true})
+      }, 5000);
+    }
+  }
+
+  const updateBlog = async (id,blogToUpdate) => {
+    try {
+      const blogUpdated= await blogService.update(id,blogToUpdate)
+      setBlogs(sortHighToLow(blogs.map((blog) => blog.id === id ? blogUpdated : blog)))
+      
+    } catch (error) {
+      setBlogs(sortHighToLow(blogs))
+      setMessage({content:`Could not update info`,isSuccess:false})
       setTimeout(() => {
         setMessage({content:null, isSuccess:true})
       }, 5000);
@@ -144,7 +162,7 @@ const App = () => {
     </Toggleable>
     
     <h2>Blogs</h2>
-    {blogs.map(blog => <Blog key={blog.id} blog={blog}/>)}
+    {blogs.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>)}
     </>
   )
 }
