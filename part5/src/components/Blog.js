@@ -34,14 +34,14 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
 
   return(
     blogVisible ? <div style={blogStyle}>
-      <p>{blog.title}  <button onClick={handleBlogVisible}> {buttonName} </button> </p>
+      <p>{blog.title}  <button onClick={handleBlogVisible} id="btn-visible"> {buttonName} </button> </p>
       <p>{blog.url}</p>
-      <p>{blog.likes} <button onClick={updatingBlog}  > Like </button> </p>
+      <p>{blog.likes} <button onClick={updatingBlog} className='btnLike' > Like </button> </p>
       <p>{blog.author} </p>
       {user.userID === blog.user ? <button onClick={removingBlog} className="btn-remove" > Remove </button> : ''}
     </div>
       : <div style={blogStyle}>
-        {blog.title}  <button onClick={handleBlogVisible}> {buttonName} </button>
+        {blog.title} by {blog.author}  <button onClick={handleBlogVisible} className='btnView'> {buttonName} </button>
       </div>
   )
 
