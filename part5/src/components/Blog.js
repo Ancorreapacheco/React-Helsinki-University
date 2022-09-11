@@ -36,7 +36,7 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
     blogVisible ? <div style={blogStyle}>
       <p>{blog.title}  <button onClick={handleBlogVisible} id="btn-visible"> {buttonName} </button> </p>
       <p>{blog.url}</p>
-      <p>{blog.likes} <button onClick={updatingBlog} className='btnLike' > Like </button> </p>
+      <p id='cantLikes'>{blog.likes} <button onClick={updatingBlog} className='btnLike' > Like </button> </p>
       <p>{blog.author} </p>
       {user.userID === blog.user ? <button onClick={removingBlog} className="btn-remove" > Remove </button> : ''}
     </div>

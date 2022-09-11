@@ -16,7 +16,7 @@ const LoginForm = ({ props }) => {
     return (
       <>
         <h2> Log In to application</h2>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} id="logIn_form">
           <div>
             <label htmlFor="username"> username</label>
             <input
@@ -37,7 +37,7 @@ const LoginForm = ({ props }) => {
               onChange={handlePassword}
             ></input>
           </div>
-          <button>Log In</button>
+          <button id='logIn_btn'>Log In</button>
         </form>
       </>
     )

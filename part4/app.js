@@ -7,6 +7,7 @@ const config= require('./utils/config')
 const blogRouter=require('./controller/blog')
 const userRouter= require('./controller/user')
 const loginRouter= require('./controller/login')
+const testingRouter= require('./controller/testing')
 
 
 //Utils
@@ -20,8 +21,6 @@ const mongoose= require('mongoose')
 
 
 const app= express()
-
-
 
 
 logger.info('connecting to ', config.MONGODB_URI)
@@ -38,6 +37,10 @@ app.use(middleware.tokenExtractor)// MWare para extrar el token enviado en el re
 app.use('/api/login',loginRouter)
 app.use('/api/users', userRouter)
 app.use('/api/blogs', blogRouter)
+if(process.env.NODE_ENV === 'test'){
+  console.log('Modo de Test reset')
+  app.use('/api/testing',testingRouter)
+}
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
