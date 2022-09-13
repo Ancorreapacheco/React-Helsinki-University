@@ -33,7 +33,7 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
   const buttonName= blogVisible ? 'Hide' : 'View'
 
   return(
-    blogVisible ? <div style={blogStyle}>
+    blogVisible ? <div style={blogStyle} className='blog'>
       <p>{blog.title}  <button onClick={handleBlogVisible} id="btn-visible"> {buttonName} </button> </p>
       <p>{blog.url}</p>
       <p id='cantLikes'>{blog.likes} <button onClick={updatingBlog} className='btnLike' > Like </button> </p>
@@ -46,6 +46,7 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
   )
 
 }
+
 
 Blog.propTypes ={
   blog: PropTypes.object.isRequired,
