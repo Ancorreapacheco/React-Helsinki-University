@@ -19,7 +19,7 @@ export default function AnecdoteList() {
   const filterPattern= useSelector(state=> state.filter)
   const anecdotes = useSelector((state) => state.anecdotes.filter(anecdote=> anecdote.content.toLowerCase().includes(filterPattern)));
   const dispatch = useDispatch();
-
+ 
   return (
     <>
       {anecdotes.map((anecdote) => (

@@ -1,4 +1,46 @@
-const anecdotesAtStart = [
+import { createSlice } from "@reduxjs/toolkit"
+
+
+const byVotes = (b1, b2) => b2.votes>b1.votes ? 1 : -1
+
+const anecdoteSlice = createSlice({
+  name:'anecdotes',
+  initialState:[],
+  reducers:{
+    addAnecdote(state,action){
+      const content= action.payload
+      state.push(content)
+    },
+    voteAnecdote(state,action){
+      const id= action.payload.id
+      return state.map(note => note.id !== id ? note : {...note,votes: note.votes + 1}).sort(byVotes)
+    },
+    appendAnecdote(state,action){
+      state.push(action.payload)
+    },
+    setAnecdotes(state,action){
+      return action.payload
+    }
+
+  }
+})
+
+export const {addAnecdote, voteAnecdote, appendAnecdote, setAnecdotes} = anecdoteSlice.actions
+export default anecdoteSlice.reducer
+
+
+
+
+
+
+
+
+
+
+
+
+//All Reducer without ToolKit
+/* const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
   'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
@@ -59,6 +101,8 @@ export const addAnecdote= content => {
       content
     }
   }
-}
+} 
 
-export default reducer
+
+
+export default reducer*/
