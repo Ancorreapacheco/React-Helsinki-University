@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import anecdotesService from "../services/anecdotes"
 
 
 const byVotes = (b1, b2) => b2.votes>b1.votes ? 1 : -1
@@ -7,11 +8,11 @@ const anecdoteSlice = createSlice({
   name:'anecdotes',
   initialState:[],
   reducers:{
-    addAnecdote(state,action){
+    /* addAnecdote(state,action){
       const content= action.payload
       state.push(content)
-    },
-    voteAnecdote(state,action){
+    }, */
+    addVote(state,action){
       const id= action.payload.id
       return state.map(note => note.id !== id ? note : {...note,votes: note.votes + 1}).sort(byVotes)
     },
@@ -25,7 +26,31 @@ const anecdoteSlice = createSlice({
   }
 })
 
-export const {addAnecdote, voteAnecdote, appendAnecdote, setAnecdotes} = anecdoteSlice.actions
+export const { addVote, appendAnecdote, setAnecdotes} = anecdoteSlice.actions
+
+export const initializateAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdotesService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const addAnecdote = (content) => {
+  return async dispatch => {
+    const newAnecdote = await anecdotesService.createNew(content)
+    dispatch(appendAnecdote(newAnecdote))
+  } 
+}
+
+export const voteAnecdote = (anecdoteToUpdate) =>{
+  return async dispatch =>{
+    const id= anecdoteToUpdate.id
+    const anecdoteUpdated= await anecdotesService.update(id,anecdoteToUpdate)    
+    dispatch(addVote(anecdoteUpdated))
+  }
+}
+
+
 export default anecdoteSlice.reducer
 
 

@@ -10,18 +10,15 @@ import { useEffect } from 'react'
 
 //Services and reducers creator
 import { useDispatch } from 'react-redux'
-import anecdotesService from './services/anecdotes'
-import { setAnecdotes } from './reducers/anecdoteReducer'
+import { initializateAnecdotes } from './reducers/anecdoteReducer'
+
+
 const App = () => {
 const dispatch= useDispatch()
 
 //Set all anecdotes
   useEffect( ()=>{
-    anecdotesService.getAll()
-      .then((anecdotes) => {
-        //console.log(anecdotes)
-        dispatch(setAnecdotes(anecdotes))
-      })
+    dispatch(initializateAnecdotes())
     
   }, [dispatch])
 
