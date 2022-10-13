@@ -28,7 +28,7 @@ export default function AnecdoteList() {
           anecdote={anecdote}
           key={anecdote.id}
           handleVote={() => {
-            dispatch(setNotification(`you voted '${anecdote.content}'`, 10));
+            dispatch(setNotification(`you voted '${anecdote.content}'`, 5));
             dispatch(voteAnecdote({...anecdote, votes: anecdote.votes + 1}));
           }}
         />

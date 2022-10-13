@@ -18,12 +18,15 @@ const notificationSlice = createSlice({
 
 export const {setMessage, removeMessage} = notificationSlice.actions
 
+let timeOutId= undefined
 export const setNotification = (message, time) => {
   return async dispatch =>{
+    clearTimeout(timeOutId)
     dispatch(setMessage(message))
-    setTimeout(() => {
+    timeOutId= setTimeout(() => {
       dispatch(removeMessage())
-    }, time *1000);
+    }, time *1000)
+    console.log(timeOutId)
   }
 }
 
