@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { addLikeBlog, removeBlog } from '../reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,23 +6,26 @@ import {
 	setNotificationSuccess,
 } from '../reducers/messageReducer'
 
+//Bootstrap
+import Button from 'react-bootstrap/Button'
+import Card from 'react-bootstrap/Card'
+import Badge from 'react-bootstrap/Badge'
+
+//Router
+import { useNavigate } from 'react-router-dom'
+
 const Blog = ({ blog }) => {
-	const [blogVisible, setBlogVisible] = useState(false)
+	const navigate= useNavigate()
 	const dispatch = useDispatch()
 	const user = useSelector((state) => state.user)
 
-
-	const handleBlogVisible = () => {
-		setBlogVisible(!blogVisible)
-	}
-
-	const updatingBlog = async () => {
+	const updatingBlog = async (e) => {
+		e.preventDefault()
 		try {
 			const blogTochange = { ...blog, likes: blog.likes + 1 }
+			console.log(blogTochange)
 			dispatch(addLikeBlog(blogTochange.id, blogTochange))
-			dispatch(
-				setNotificationSuccess(`Plus Like to ${blogTochange.title}`)
-			)
+			dispatch(setNotificationSuccess(`Plus Like to ${blogTochange.title}`))
 		} catch (error) {
 			dispatch(setNotificationFail('Operation Unsuccessfull'))
 		}
@@ -34,6 +36,7 @@ const Blog = ({ blog }) => {
 			try {
 				dispatch(removeBlog(blog.id))
 				dispatch(setNotificationSuccess(`Deleted: ${blog.title}`))
+				navigate('/')
 			} catch (error) {
 				dispatch(setNotificationFail('Operation Unsuccessfull'))
 			}
@@ -41,54 +44,42 @@ const Blog = ({ blog }) => {
 		return
 	}
 
-	//Style
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: 'solid',
-		borderWidth: 1,
-		marginBottom: 5,
+	if (!blog) {
+		return null
 	}
 
-	const buttonName = blogVisible ? 'Hide' : 'View'
+	return (
+		<div>
+			<Card>
+				<Card.Header as='h2'>{blog.title}</Card.Header>
+				<Card.Body>
+					<Card.Title as='h6'>Added by {blog.author} </Card.Title>
+					<Card.Text>{blog.url}</Card.Text>
+					<p>
+						{' '}
+						Likes: <Badge> {blog.likes} </Badge>{' '}
+					</p>
+					<Button variant='primary' onClick={updatingBlog}>
+						Add Like
+					</Button>
+				</Card.Body>
+				{user.userID === blog.user ? (
+					<Card.Footer>
+						<Button variant='danger' onClick={removingBlog} >
+						Remove
+						</Button>
 
-	return blogVisible ? (
-		<div style={blogStyle} className='blog'>
-			<p>
-				{blog.title}
-				<button onClick={handleBlogVisible} id='btn-visible'>
-					{buttonName}
-				</button>
-			</p>
-			<p>{blog.url}</p>
-			<p id='cantLikes'>
-				{blog.likes}
-				<button onClick={updatingBlog} className='btnLike'>
-					likes
-				</button>
-			</p>
-			<p>{blog.author} </p>
-			{user.userID === blog.user ? (
-				<button onClick={removingBlog} className='btn-remove'>
-					Remove
-				</button>
-			) : (
-				''
-			)}
-		</div>
-	) : (
-		<div style={blogStyle}>
-			{blog.title} by {blog.author}
-			<button onClick={handleBlogVisible} className='btnView'>
-				{buttonName}
-			</button>
+					</Card.Footer>
+				) : (
+					''
+				)}
+			</Card>
 		</div>
 	)
 }
 
 Blog.propTypes = {
 	blog: PropTypes.object.isRequired,
-	user: PropTypes.object.isRequired,
 }
 
 export default Blog
