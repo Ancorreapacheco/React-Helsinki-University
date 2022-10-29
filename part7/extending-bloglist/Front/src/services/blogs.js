@@ -35,6 +35,16 @@ const update = async (id, blogToUpdate) => {
 	}
 }
 
+const addComment = async (id,  comment ) => {
+
+	try {
+		const response= await axios.post(`${baseUrl}/${id}/comments`,{ comment })
+		return response.data
+	} catch (error) {
+		console.log(error.message)
+	}
+}
+
 const remove = async id => {
 	const configuration = {
 		headers:{
@@ -50,4 +60,4 @@ const remove = async id => {
 	}
 }
 
-export default { getAll, setToken, create, update, remove }
+export default { getAll, setToken, create, update, remove, addComment }

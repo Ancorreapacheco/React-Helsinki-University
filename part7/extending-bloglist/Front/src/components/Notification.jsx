@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import { Alert } from 'react-bootstrap'
 
 
 const Notification = () => {
@@ -11,9 +12,9 @@ const Notification = () => {
 		return null
 	}
 	if (isSuccess) {
-		return <div className="msjSuccess">{content}</div>
+		return <Alert variant='success'>{content}</Alert>
 	}
-	return <div className="msjNoSuccess">{content}</div>
+	return <Alert variant='danger'>{content}</Alert>
 }
 
 export default Notification

@@ -26,11 +26,11 @@ const LoginForm = () => {
 				<form onSubmit={handleLogin} id='logIn_form'>
 					<div>
 						<label htmlFor='username'> username</label>
-						<input {...username}></input>
+						<input className='form-control' {...username}></input>
 					</div>
 					<div>
 						<label htmlFor='password'> password</label>
-						<input {...password}></input>
+						<input className='form-control' {...password}></input>
 					</div>
 					<button id='logIn_btn'>Log In</button>
 				</form>

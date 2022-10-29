@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
 import { setNotificationFail, setNotificationSuccess } from '../reducers/messageReducer'
+import { Button } from 'react-bootstrap'
 
 
 
@@ -44,20 +45,20 @@ const NewBlogForm= ({ toggleVisibility }) => {
 	return (
 		<>
 			<h2> New Entry</h2>
-			<form onSubmit={handleNewBlog}>
+			<form onSubmit={handleNewBlog} className='mb-3' >
 				<div>
 					<label htmlFor="title">Title:</label>
-					<input type="text" id="title" value={title} onChange={handleTitle}/>
+					<input className='form-control' type="text" id="title" value={title} onChange={handleTitle}/>
 				</div>
 				<div>
 					<label htmlFor="author">Author:</label>
-					<input type="text" id="author" value={author} onChange={handleAuthor}/>
+					<input className='form-control' type="text" id="author" value={author} onChange={handleAuthor}/>
 				</div>
 				<div>
 					<label htmlFor="url">URL:</label>
-					<input type="text" id="url" value={url} onChange={handleUrl}/>
+					<input className='form-control' type="text" id="url" value={url} onChange={handleUrl}/>
 				</div>
-				<button id='btn-save'> Create</button>
+				<Button variant='primary' id='btn-save' type='submit'> Create</Button>
 
 
 			</form>

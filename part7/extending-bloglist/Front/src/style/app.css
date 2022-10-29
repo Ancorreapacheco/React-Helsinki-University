@@ -22,3 +22,19 @@
   background-color: black;
   color: red;
 }
+
+.header__contain{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* .header__contain > div{
+  flex-grow: 1;
+  height: 50%;
+}
+ */
+.header__contain__user{
+  display: flex;
+  align-items: center;
+}
