@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { v1: uuid} = require('uuid')
 
 let authors = [
 	{
@@ -44,7 +45,7 @@ let books = [
 		published: 2002,
 		author: 'Robert Martin',
 		id: 'afa5b6f5-344d-11e9-a414-719c6709cf3e',
-		genres: ['agile', 'patterns', 'design'],
+		genres: ['agile', 'patterns', 'design', 'refactoring'],
 	},
 	{
 		title: 'Refactoring, edition 2',
@@ -107,6 +108,21 @@ const typeDefs = gql`
 		allBooks(author:String, genre:String): [Book]!
 		allAuthors: [Author]
 	}
+
+  type Mutation{
+    addBook(
+    title: String!
+    author: String!
+    published: Int!
+    genres: [String]
+    ):Book
+    
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ):Author
+  }
+
 `
 
 const resolvers = {
@@ -117,30 +133,72 @@ const resolvers = {
 		},
 	},
 
-  Author: {		
+	Author: {
 		bookCount: (root) => {
-      const count= books.reduce((prev,curr) => {
-        curr.author === root.name 
-          ? prev = prev + 1 
-          : prev
+			const count = books.reduce((prev, curr) => {
+				curr.author === root.name ? (prev = prev + 1) : prev
 
-        return prev
-      },0)
-      return count  
-    },
+				return prev
+			}, 0)
+			return count
+		},
 	},
 
 	Query: {
 		bookCount: () => books.length,
 		authorCount: () => authors.length,
-		allBooks: (root, args) =>{
-      if(!args.author){
-        return books
-      }          
-      return books.filter(book => book.author === args.author)
-    },
+		allBooks: (root, args) => {
+			console.log(args.author, '$$', args.genre)
+
+			if (!args.author && !args.genre) {
+				return books
+			}
+			if (args.author && args.genre) {
+				const filterByAuthor = books.filter(
+					(book) => book.author === args.author
+				)
+				const filterByGenres = filterByAuthor.filter((book) => {
+					return book.genres.find((genres) => genres === args.genre)
+				})
+				return filterByGenres
+			}
+			if (args.author) {
+				const filterByAuthor = books.filter(
+					(book) => book.author === args.author
+				)
+				return filterByAuthor
+			}
+			if (args.genre) {
+				const filterByGenres = books.filter((book) => {
+					return book.genres.find((genres) => genres === args.genre)
+				})
+				return filterByGenres
+			}
+		},
 		allAuthors: () => authors,
 	},
+
+  Mutation:{
+    addBook:(root,args) =>{      
+      const authorExist = authors.find(author => author.name === args.author)
+      if(!authorExist){
+        authors.push({name: args.author, id: uuid()})
+      }
+
+      const newBook= {...args, id:uuid()}
+      books= books.concat(newBook)
+      return newBook      
+    },
+    editAuthor:(root,args) => {
+      const authorFinded = authors.find(author => author.name === args.name)
+      if(!authorFinded){
+        return null
+      }
+      const authorModified = {...authorFinded, born: args.setBornTo}
+      authors= authors.map((author) => author.name === args.name ? authorModified : author )
+      return authorModified
+    }
+  }
 }
 
 const server = new ApolloServer({
