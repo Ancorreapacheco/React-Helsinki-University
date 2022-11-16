@@ -1,5 +1,11 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const { v1: uuid} = require('uuid')
+
+const Book= require('./models/book')
+const Author= require('./models/author')
+const mongoose= require('mongoose')
+const book = require('./models/book')
+
 
 let authors = [
 	{
@@ -84,6 +90,23 @@ let books = [
 	},
 ]
 
+const MONGODB_URI =
+	'mongodb+srv://fullstack:RQbSYMKU6KkqJRWs@cluster0.gbh8rif.mongodb.net/libraryGraphqlApp?retryWrites=true&w=majority'
+
+
+const JWT_SECRET= 'ESTA ES MI CLAVE SECRETA, DEBE IR EN .ENV FILE' 
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose
+	.connect(MONGODB_URI)
+	.then(() => {
+		console.log('connected to MongoDB')
+	})
+	.catch((error) => {
+		console.log('error connection to MongoDB:', error.message)
+	})
+
 //Defining Schema
 
 const typeDefs = gql`
@@ -99,7 +122,7 @@ const typeDefs = gql`
 		published: Int!
 		author: Author!
 		id: ID
-		genres: [String]!
+		genres: [String!]!
 	}
 
 	type Query {
@@ -114,8 +137,8 @@ const typeDefs = gql`
     title: String!
     author: String!
     published: Int!
-    genres: [String]
-    ):Book
+    genres: [String!]!
+    ):Book!
     
     editAuthor(
       name: String!
@@ -127,34 +150,45 @@ const typeDefs = gql`
 
 const resolvers = {
 	Book: {
-		author: (root) => {
-			const author = authors.find((a) => a.name === root.author)
-			return author
+		author:async (root) => {
+			/* const authorsInDb= await Author.find({})
+			const author = authorsInDb.find((a) => a.name === root.author)
+			return author */
+			return Author.findOne({name: root.author})
 		},
 	},
 
 	Author: {
-		bookCount: (root) => {
-			const count = books.reduce((prev, curr) => {
+		bookCount: async (root) => {
+
+			const booksCount = await Book.find({author: {$in: [root.name]}})
+			return booksCount.length
+
+			/* const booksInDb= await Book.find({})
+			const count = booksInDb.reduce((prev, curr) => {
 				curr.author === root.name ? (prev = prev + 1) : prev
 
 				return prev
 			}, 0)
-			return count
+			return count */
 		},
 	},
 
 	Query: {
-		bookCount: () => books.length,
-		authorCount: () => authors.length,
-		allBooks: (root, args) => {
-			console.log(args.author, '$$', args.genre)
+		bookCount: async () => Book.collection.countDocuments(),
+		authorCount: async () => Author.collection.countDocuments(),
+		allBooks: async (root, args) => {			
 
 			if (!args.author && !args.genre) {
-				return books
+				//return books
+				return Book.find({})
 			}
+
+			const booksInDb = await Book.find({})
+
 			if (args.author && args.genre) {
-				const filterByAuthor = books.filter(
+				//const filterByAuthor = books.filter(
+				const filterByAuthor = booksInDb.filter(
 					(book) => book.author === args.author
 				)
 				const filterByGenres = filterByAuthor.filter((book) => {
@@ -163,30 +197,44 @@ const resolvers = {
 				return filterByGenres
 			}
 			if (args.author) {
-				const filterByAuthor = books.filter(
+				//const filterByAuthor = books.filter(
+				const filterByAuthor = booksInDb.filter(
 					(book) => book.author === args.author
 				)
 				return filterByAuthor
 			}
 			if (args.genre) {
-				const filterByGenres = books.filter((book) => {
+				const filterByGenres = booksInDb.filter((book) => {
 					return book.genres.find((genres) => genres === args.genre)
 				})
 				return filterByGenres
 			}
 		},
-		allAuthors: () => authors,
+		allAuthors: async () => Author.find({}),
 	},
 
   Mutation:{
-    addBook:(root,args) =>{      
-      const authorExist = authors.find(author => author.name === args.author)
+		//TODO I am here
+    addBook: async (root,args) =>{      
+      //const authorExist = authors.find(author => author.name === args.author)
+			console.log('adding book init')
+      const authorExist = await Author.findOne({name: args.author})
+			console.log('exist?', authorExist)
       if(!authorExist){
-        authors.push({name: args.author, id: uuid()})
+        //authors.push({name: args.author, id: uuid()})
+				console.log('crear nuevo author')
+				const newAuthor= new Author({name: args.author})
+				await newAuthor.save()
       }
 
-      const newBook= {...args, id:uuid()}
-      books= books.concat(newBook)
+			const newBook= new Book({ ...args })
+			
+			try {
+				await newBook.save()	
+			} catch (error) {
+				throw new UserInputError(error.message, {invalidArgs: args})
+			}
+      
       return newBook      
     },
     editAuthor:(root,args) => {
