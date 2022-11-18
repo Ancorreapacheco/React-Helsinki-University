@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/client"
-import { ALL_BOOKS } from "../graphql/queries"
+import { useQuery } from '@apollo/client'
+import { ALL_BOOKS } from '../graphql/queries'
 
 const Books = (props) => {
 
@@ -12,7 +12,7 @@ const Books = (props) => {
     return(<div> Loading Content</div>)
   }
 
- 
+
   return (
     <div>
       <h2>books</h2>
