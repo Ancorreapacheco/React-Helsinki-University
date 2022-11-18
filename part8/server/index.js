@@ -93,7 +93,9 @@ const resolvers = {
 			const author = authorsInDb.find((a) => a._id.toString(0) === root.author.toString())
 			console.log(author)
 			return author */
-      return Author.findOne({ id: root.author })
+      console.log(root)
+      return Author.findById(root.author)
+      //return Author.findOne({ id: root.author })
     },
   },
 
@@ -250,9 +252,9 @@ const server = new ApolloServer({
     const auth = req ? req.headers.authorization : null
     if(auth && auth.toLowerCase().startsWith('bearer ')){
       const decodedToken = jwt.decode(auth.substring(7), JWT_SECRET )
-      console.log(decodedToken)
+
       const currentUser = await User.findById(decodedToken.id)
-      console.log('current', currentUser)
+
       return { currentUser }
     }
   }

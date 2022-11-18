@@ -3,43 +3,29 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LogInForm'
 import NewBook from './components/NewBook'
+import { useApolloClient } from '@apollo/client'
+import Recommendations from './components/Recommendations'
 
 const App = () => {
   const [page, setPage] = useState('authors')
-  const [user] = useState(null)
-  const [username, setUsername]= useState('')
-  const [password, setPassword] = useState('')
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
 
-  const handleLogin = e => {
+  const handleLogOut = (e) => {
     e.preventDefault()
-    console.log('login in')
-    console.log(username, password)
+    localStorage.clear()
+    setToken(null)
+    client.resetStore()
   }
 
-  const handleUsername = e => {
-    setUsername(e.target.value)
-  }
-
-  const handlePassword = e => {
-    setPassword(e.target.value)
-  }
-
-  const loginFormProps = {
-    handleLogin,
-    handleUsername,
-    handlePassword,
-    username,
-    password
-  }
-
-
-  if(!user){
+  if(!token){
     return(
       <>
 
-        <LoginForm props={loginFormProps }/>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
+        <button onClick={() => setPage('login')}>Login</button>
+        <LoginForm show={page==='login'} setToken={setToken} setPage={setPage}/>
         <Authors show={page === 'authors'} />
         <Books show={page === 'books'} />
 
@@ -53,14 +39,14 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
-        <button> LogOut</button>
+        <button onClick={() => setPage('recommendatios')}>recommendations</button>
+        <button onClick={handleLogOut}> LogOut</button>
       </div>
 
       <Authors show={page === 'authors'} />
-
       <Books show={page === 'books'} />
-
       <NewBook show={page === 'add'} />
+      <Recommendations show={page === 'recommendatios'}/>
     </div>
   )
 }
