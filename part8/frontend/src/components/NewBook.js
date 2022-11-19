@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS, ALL_BOOKS_BY_GENRE } from '../graphql/queries'
+import {
+  ADD_BOOK,
+  ALL_BOOKS,
+  ALL_AUTHORS,
 
+} from '../graphql/queries'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -11,10 +15,12 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
 
-  //FIXME Refetching query with variables, Apollo downgraded
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }, { query: ALL_BOOKS_BY_GENRE }],
-
+    refetchQueries: [
+      { query: ALL_BOOKS },
+      { query: ALL_AUTHORS },
+      'AllBooksByGenre'
+    ],
   })
 
   if (!props.show) {
@@ -76,8 +82,6 @@ const NewBook = (props) => {
           <button type='submit'>create book</button>
         </form>
       </div>
-
-
     </div>
   )
 }
