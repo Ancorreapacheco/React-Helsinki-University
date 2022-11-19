@@ -22,7 +22,7 @@ const Books = (props) => {
     return(<div> Loading Content</div>)
   }
 
-  const genresList = books.data.allBooks.reduce((prev,curr) => {
+  const genresList = books?.data?.allBooks?.reduce((prev,curr) => {
     curr.genres.map(genre => prev.includes(genre) ? null : prev.push(genre) )
     return prev
   },['all genres'])
@@ -46,7 +46,7 @@ const Books = (props) => {
               <td>{a.title}</td>
               <td>{a.author.name}</td>
               <td>{a.published}</td>
-              <td>{a.genres.reduce((prev,curr) => prev + ', ' + curr )}</td>
+              <td>{a.genres.reduce((prev,curr) => prev + ', ' + curr,'' )}</td>
             </tr>
           ))}
         </tbody>
