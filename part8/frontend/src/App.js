@@ -3,8 +3,10 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LogInForm'
 import NewBook from './components/NewBook'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import Recommendations from './components/Recommendations'
+
+import { BOOK_ADDED, ALL_BOOKS, ALL_AUTHORS } from './graphql/queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -17,6 +19,19 @@ const App = () => {
     setToken(null)
     client.resetStore()
   }
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const bookAdded= data?.data?.bookAdded
+      if(bookAdded){
+        window.alert(`New Book Added: ${bookAdded.title}`)
+        client.refetchQueries({
+          include: ['AllBooksByGenre', ALL_BOOKS, ALL_AUTHORS]
+        })
+
+      }
+    }
+  })
 
   if(!token){
     return(
